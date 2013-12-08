@@ -29,38 +29,45 @@ class NetView(QtGui.QGraphicsView):
         
     def processAction(self, act, ev):
         if act == self.actCreateVertex:
-            text, ok = QtGui.QInputDialog.getText(self, 'Create Vertex', 
+            text, ok = QtGui.QInputDialog.getText(self, 'Create Vertex',
             'Label:')
         
             if ok:
-                scn = self.scene()
-                self.vtx = QtGui.QGraphicsEllipseItem(0,0,40,40)
+                self.addVertexToScene(ev.pos(), text)
                 
-                self.vtx.setBrush(QtGui.QColor(255,0,0))
-                scn.addItem(self.vtx)
-                self.vtx.setPos(ev.pos())
-                self.vtxt = QtGui.QGraphicsTextItem(text)
-                
-                scn.addItem(self.vtxt)
-                
-                self.vtxt.setPos(ev.pos())
-                self.render(QtGui.QPainter())
-            
+
+    def addVertexToScene(self, pos, text):
+        scn = self.scene()
+        self.vtx = QtGui.QGraphicsEllipseItem(0, 0, 40, 40)
+        
+        self.vtx.setBrush(QtGui.QColor(90, 170, 255))
+        scn.addItem(self.vtx)
+        self.vtx.setPos(pos)
+        
+        self.vtxt = QtGui.QGraphicsTextItem(text)
+        scn.addItem(self.vtxt)
+        
+        tw = self.vtxt.boundingRect().width()
+        vw = self.vtx.boundingRect().width()
+        th = self.vtxt.boundingRect().height()
+        vh = self.vtx.boundingRect().height()
+        
+        self.vtxt.setPos(pos.x() + (vw / 2 - tw / 2), pos.y() + (vh / 2 - th / 2))
                   
             
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        self.ui=Ui_MainWindow()
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
         self.scene = Scene()
         self.netView = NetView()
         self.netView.setScene(self.scene)
         self.netView.setViewport(QtOpenGL.QGLWidget())
-        self.scene.setSceneRect(0,0,1600,1600)
-        self.scene.setBackgroundBrush(QtGui.QColor(255,255,200))
+        self.scene.setSceneRect(0, 0, 1600, 1600)
+        self.scene.setBackgroundBrush(QtGui.QColor(255, 255, 200))
         self.netView.render(QtGui.QPainter())
         
         self.ui.verticalLayout.addWidget(self.netView)
