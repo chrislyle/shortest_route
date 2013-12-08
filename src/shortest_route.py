@@ -131,7 +131,7 @@ def usage():
     print 'Usage: shortest_route <filename> <source> <target>'
 
 def main():
-    if len(sys.argv) != 4:
+    if len(sys.argv) < 4:
         usage()
         exit()
         
